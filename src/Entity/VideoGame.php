@@ -31,6 +31,10 @@ class VideoGame
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'videoGames')]
     private Collection $category;
 
+    #[ORM\ManyToOne(inversedBy: 'videoGames')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Editor $editor = null;
+
     public function __construct()
     {
         $this->category = new ArrayCollection();
@@ -97,6 +101,18 @@ class VideoGame
     public function removeCategory(Category $category): static
     {
         $this->category->removeElement($category);
+
+        return $this;
+    }
+
+    public function getEditor(): ?Editor
+    {
+        return $this->editor;
+    }
+
+    public function setEditor(?Editor $editor): static
+    {
+        $this->editor = $editor;
 
         return $this;
     }

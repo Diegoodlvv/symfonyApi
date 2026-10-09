@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EditorRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EditorRepository::class)]
@@ -18,6 +20,17 @@ class Editor
 
     #[ORM\Column(length: 255)]
     private ?string $country = null;
+
+    /**
+     * @var Collection<int, VideoGame>
+     */
+    #[ORM\OneToMany(targetEntity: VideoGame::class, mappedBy: 'editor')]
+    private Collection $videoGames;
+
+    public function __construct()
+    {
+        $this->videoGames = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -44,6 +57,36 @@ class Editor
     public function setCountry(string $country): static
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, VideoGame>
+     */
+    public function getVideoGames(): Collection
+    {
+        return $this->videoGames;
+    }
+
+    public function addVideoGame(VideoGame $videoGame): static
+    {
+        if (!$this->videoGames->contains($videoGame)) {
+            $this->videoGames->add($videoGame);
+            $videoGame->setEditor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideoGame(VideoGame $videoGame): static
+    {
+        if ($this->videoGames->removeElement($videoGame)) {
+            // set the owning side to null (unless already changed)
+            if ($videoGame->getEditor() === $this) {
+                $videoGame->setEditor(null);
+            }
+        }
 
         return $this;
     }
