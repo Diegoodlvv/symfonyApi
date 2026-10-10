@@ -20,7 +20,7 @@ final class EditorController extends AbstractController
 {
     // Liste des éditeurs
 
-    #[Route('/api/v1/editors', name: 'app_editor', methods: ['GET'])]
+    #[Route('/api/editors', name: 'app_editors', methods: ['GET'])]
     #[OA\Response(
         response:200,
         description:'Retourne la liste des éditeurs',
@@ -29,6 +29,7 @@ final class EditorController extends AbstractController
             items: new OA\Items(ref: new Model(type: Editor::class, groups: ['editor:read'])
         ))
     )]
+    #[OA\Tag('Editeurs', 'Routes concernant la gestion des éditeurs de jeu vidéo')]
     public function index(EditorRepository $editorRepository): JsonResponse
     {   
         $editors = $editorRepository->findAll();
@@ -36,9 +37,26 @@ final class EditorController extends AbstractController
         return $this->json($editors, Response::HTTP_OK, [], ['groups' => 'editor:read']);
     }
 
+    // Récupération d'un éditeur 
+
+    #[Route('api/editor/{id}', name:'app_editor', methods:['GET'])]
+    #[OA\Response(
+        response:200,
+        description:"retourne l'éditeur choisi, modifié ou crée",
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Editor::class, groups: ['editor:read'])
+        ))
+    )]
+    #[OA\Tag('Editeurs')]
+    public function getEditor(Editor $editor): JsonResponse
+    {
+        return $this->json($editor, Response::HTTP_OK, [], ['groups' => 'editor:read']);
+    }
+
     // Création d'un éditeur
 
-    #[Route('/api/v1/editors/new', name: 'app_new_editor', methods: ['POST'])]
+    #[Route('/api/v1/editor', name: 'app_new_editor', methods: ['POST'])]
     #[OA\Response(
         response:201,
         description:"retourne l'éditeur qui vient d'être créer",
@@ -46,6 +64,10 @@ final class EditorController extends AbstractController
             ref: new Model(type: Editor::class, groups: ['editor:write'])
         )
     )]
+    #[OA\RequestBody(
+        content: new Model(type: Editor::class, groups: ['editor:write'])
+    )]
+    #[OA\Tag('Editeurs')]
     public function createEditor(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $editor = $serializer->deserialize($request->getContent(), type:Editor::class, format:'json');
@@ -53,7 +75,7 @@ final class EditorController extends AbstractController
         $em->flush();
 
         $location = $urlGenerator->generate(
-            'editor', ['id' => $editor->getId()],
+            'app_editor', ['id' => $editor->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
@@ -62,7 +84,7 @@ final class EditorController extends AbstractController
 
     // Modification d'un éditeur
 
-    #[Route('/api/v1/editor/{id}/edit', name: 'app_edit_editor', methods: ['PUT'])]
+    #[Route('/api/v1/editor/{id}', name: 'app_edit_editor', methods: ['PUT'])]
     #[OA\Response(
         response:200,
         description:"retourne l'éditeur qui vient d'être modifié",
@@ -71,13 +93,17 @@ final class EditorController extends AbstractController
         )
 
     )]
+    #[OA\RequestBody(
+        content: new Model(type: Editor::class, groups: ['editor:write'])
+    )]
+    #[OA\Tag('Editeurs')]
     public function updateEditor(Editor $currentEditor, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $updatedEditor = $serializer->deserialize($request->getContent(), Editor::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentEditor]);
         $em->flush();
 
         $location = $urlGenerator->generate(
-            'editor', ['id' => $updatedEditor->getId()],
+            'app_editor', ['id' => $updatedEditor->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
@@ -91,6 +117,7 @@ final class EditorController extends AbstractController
         response:200,
         description: 'retourne un message de succès',
     )]
+    #[OA\Tag('Editeurs')]
     public function deleteEditor(Editor $editor, EntityManagerInterface $em): JsonResponse
     {
         $em->remove($editor);
