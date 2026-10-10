@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 
 #[ORM\Entity(repositoryClass: VideoGameRepository::class)]
 class VideoGame
@@ -15,31 +17,47 @@ class VideoGame
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('videoGame:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]     
-    #[Groups(['videoGame:read', 'videoGame:write'])]
+    #[Groups(['videogame:read', 'videogame:write'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['videoGame:read', 'videoGame:write'])]
+    #[Groups(['videogame:read', 'videogame:write'])]
     private ?\DateTime $releaseDate = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['videoGame:read', 'videoGame:write'])]
+    #[Groups(['videogame:read', 'videogame:write'])]
     private ?string $description = null;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'videoGames')]
-    #[Groups('videoGame:read')]
+    #[Groups(['videogame:read'])]
+    #[OA\Property(
+        type: 'array',
+        items: new OA\Items(
+            ref: new Model(
+                type: Category::class,
+                groups: ['category:read'],
+                name: 'CategoryRead'
+            )
+        )
+    )]
     private Collection $category;
 
     #[ORM\ManyToOne(inversedBy: 'videoGames')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups('videoGame:read')]
+    #[Groups(['videogame:read'])]
+    #[OA\Property(
+        ref: new Model(
+            type: Editor::class,
+            groups: ['editor:read'],
+            name: 'EditorRead'
+        )
+    )]
     private ?Editor $editor = null;
 
     public function __construct()

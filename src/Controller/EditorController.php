@@ -26,7 +26,7 @@ final class EditorController extends AbstractController
         description:'Retourne la liste des éditeurs',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Editor::class, groups: ['editor:read'])
+            items: new OA\Items(ref: new Model(type: Editor::class, groups: ['editor:read'], name: 'EditorRead')
         ))
     )]
     #[OA\Tag('Editeurs', 'Routes concernant la gestion des éditeurs de jeu vidéo')]
@@ -45,7 +45,7 @@ final class EditorController extends AbstractController
         description:"retourne l'éditeur choisi, modifié ou crée",
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Editor::class, groups: ['editor:read'])
+            items: new OA\Items(ref: new Model(type: Editor::class, groups: ['editor:read'], name: 'EditorRead')
         ))
     )]
     #[OA\Tag('Editeurs')]
@@ -61,11 +61,11 @@ final class EditorController extends AbstractController
         response:201,
         description:"retourne l'éditeur qui vient d'être créer",
         content: new OA\JsonContent(
-            ref: new Model(type: Editor::class, groups: ['editor:write'])
+            ref: new Model(type: Editor::class, groups: ['editor:write'], name: 'EditorWrite')
         )
     )]
     #[OA\RequestBody(
-        content: new Model(type: Editor::class, groups: ['editor:write'])
+        content: new Model(type: Editor::class, groups: ['editor:write'], name: 'EditorWrite')
     )]
     #[OA\Tag('Editeurs')]
     public function createEditor(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
@@ -89,12 +89,12 @@ final class EditorController extends AbstractController
         response:200,
         description:"retourne l'éditeur qui vient d'être modifié",
         content: new OA\JsonContent(
-            ref: new Model(type: Editor::class, groups: ['editor:write'])
+            ref: new Model(type: Editor::class, groups: ['editor:write'], name: 'EditorWrite')
         )
 
     )]
     #[OA\RequestBody(
-        content: new Model(type: Editor::class, groups: ['editor:write'])
+        content: new Model(type: Editor::class, groups: ['editor:write'], name: 'EditorWrite')
     )]
     #[OA\Tag('Editeurs')]
     public function updateEditor(Editor $currentEditor, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse

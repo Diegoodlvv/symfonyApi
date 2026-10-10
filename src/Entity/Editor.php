@@ -19,7 +19,7 @@ class Editor
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['editor:read', 'editor:write', 'videoGame:read'])]
+    #[Groups(['editor:read', 'editor:write', 'videogame:read'])]
     #[Assert\NotBlank(groups:['editor:read', 'editor:write'])]
     #[Assert\Type('string')]
     private ?string $name = null;

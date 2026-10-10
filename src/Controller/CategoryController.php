@@ -26,7 +26,7 @@ final class CategoryController extends AbstractController
         description:'Retourne la liste des catégories',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Category::class, groups: ['category:read'])
+            items: new OA\Items(ref: new Model(type: Category::class, groups: ['category:read'], name: 'CategoryRead')
         ))
     )]
     #[OA\Tag('Catégories', 'Routes concernant la gestion des catégories de jeu vidéo')]
@@ -45,7 +45,7 @@ final class CategoryController extends AbstractController
         description:"retourne la catégorie choisie, modifiée ou créee",
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Category::class, groups: ['category:read'])
+            items: new OA\Items(ref: new Model(type: Category::class, groups: ['category:read'], name: 'CategoryRead')
         ))
     )]
     #[OA\Tag('Catégories')]
@@ -61,11 +61,11 @@ final class CategoryController extends AbstractController
         response:201,
         description:"retourne la catégorie qui vient d'être créee",
         content: new OA\JsonContent(
-            ref: new Model(type: Category::class, groups: ['category:write'])
+            ref: new Model(type: Category::class, groups: ['category:write'], name: 'CategoryWrite')
         )
     )]
     #[OA\RequestBody(
-        content: new Model(type: Category::class, groups: ['category:write'])
+        content: new Model(type: Category::class, groups: ['category:write'], name: 'CategoryWrite')
     )]
     #[OA\Tag('Catégories')]
     public function createCategory(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
@@ -89,12 +89,12 @@ final class CategoryController extends AbstractController
         response:200,
         description:"retourne la catégorie qui vient d'être modifiée",
         content: new OA\JsonContent(
-            ref: new Model(type: Category::class, groups: ['category:write'])
+            ref: new Model(type: Category::class, groups: ['category:write'], name: 'CategoryWrite')
         )
 
     )]
     #[OA\RequestBody(
-        content: new Model(type: Category::class, groups: ['category:write'])
+        content: new Model(type: Category::class, groups: ['category:write'], name: 'CategoryWrite')
     )]
     #[OA\Tag('Catégories')]
     public function updateEditor(Category $currentCategory, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
