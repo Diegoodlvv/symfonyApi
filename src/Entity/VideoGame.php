@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: VideoGameRepository::class)]
 class VideoGame
@@ -14,25 +15,31 @@ class VideoGame
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('videoGame:read')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255)]     
+    #[Groups(['videoGame:read', 'videoGame:write'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['videoGame:read', 'videoGame:write'])]
     private ?\DateTime $releaseDate = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['videoGame:read', 'videoGame:write'])]
     private ?string $description = null;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'videoGames')]
+    #[Groups('videoGame:read')]
     private Collection $category;
 
     #[ORM\ManyToOne(inversedBy: 'videoGames')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('videoGame:read')]
     private ?Editor $editor = null;
 
     public function __construct()
