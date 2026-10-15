@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use OpenApi\Augmenter\Types;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
@@ -18,10 +19,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups('user:read')]
     private ?string $username = null;
 
-    #[ORM\Column(type: 'boolean')]
-    private ?bool $subscription_to_newsletter;
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    #[Groups(['user:read', 'user:write'])]
+    private ?bool $subscriptionToNewsletter = false;
 
     /**
      * @var list<string> The user roles
@@ -52,12 +55,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isSubscribed(){
-        return $this->subscription_to_newsletter;
+    public function isSubscriptionToNewsletter(): ?bool
+    {
+        return $this->subscriptionToNewsletter;
     }
 
-    public function setSubscription(bool $subscription_to_newsletter){
-        $this->subscription_to_newsletter = $subscription_to_newsletter;
+    public function setSubscriptionToNewsletter(?bool $subscriptionToNewsletter): static
+    {
+        $this->subscriptionToNewsletter = $subscriptionToNewsletter;
         return $this;
     }
 

@@ -25,4 +25,13 @@ class UserRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function getSubscribedUsers(): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.subscriptionToNewsletter = :subscribed')
+            ->setParameter('subscribed', true);
+
+        return $qb;
+    }
 }
