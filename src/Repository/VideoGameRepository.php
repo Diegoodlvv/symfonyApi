@@ -16,4 +16,13 @@ class VideoGameRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, VideoGame::class);
     }
+
+    public function findAllWithPagination(int $page, int $limit) {
+        $qb = $this->createQueryBuilder('v')
+            ->orderBy('v.title', 'ASC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        return $qb->getQuery()->getResult();
+    }
 }

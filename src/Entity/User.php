@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Augmenter\Types;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -18,6 +19,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     private ?string $username = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $subscription_to_newsletter;
 
     /**
      * @var list<string> The user roles
@@ -45,6 +49,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->username = $username;
 
+        return $this;
+    }
+
+    public function isSubscribed(){
+        return $this->subscription_to_newsletter;
+    }
+
+    public function setSubscription(bool $subscription_to_newsletter){
+        $this->subscription_to_newsletter = $subscription_to_newsletter;
         return $this;
     }
 

@@ -30,9 +30,11 @@ final class VideoGameController extends AbstractController
         ))
     )]
     #[OA\Tag('Jeux Vidéo', 'Routes concernant la gestion des jeux vidéo')]
-    public function index(VideoGameRepository $videoGameRepository): JsonResponse
+    public function getVideoGames(VideoGameRepository $videoGameRepository, Request $request): JsonResponse
     {   
-        $videoGames = $videoGameRepository->findAll();
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+        $videoGames = $videoGameRepository->findAllWithPagination($page, $limit);
 
         return $this->json($videoGames, Response::HTTP_OK, [], ['groups' => 'videogame:read']);
     }

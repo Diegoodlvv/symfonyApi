@@ -8,12 +8,21 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Categorie>
+ * @extends ServiceEntityRepository<Category>
  */
 class CategoryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Category::class);
+    }
+
+    public function findAllWithPagination(int $page, int $limit) {
+        $qb = $this->createQueryBuilder('c')
+            ->orderBy('c.name', 'ASC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        return $qb->getQuery()->getResult();
     }
 }

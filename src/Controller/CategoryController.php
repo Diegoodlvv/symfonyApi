@@ -30,9 +30,12 @@ final class CategoryController extends AbstractController
         ))
     )]
     #[OA\Tag('Catégories', 'Routes concernant la gestion des catégories de jeu vidéo')]
-    public function index(categoryRepository $categoryRepository): JsonResponse
+    public function getCategories(CategoryRepository $categoryRepository, Request $request): JsonResponse
     {   
-        $categories = $categoryRepository->findAll();
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+        
+        $categories = $categoryRepository->findAllWithPagination($page, $limit);
 
         return $this->json($categories, Response::HTTP_OK, [], ['groups' => 'category:read']);
     }

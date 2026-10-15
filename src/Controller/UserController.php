@@ -30,9 +30,11 @@ final class UserController extends AbstractController
         ))
     )]
     #[OA\Tag('Utilisateurs', 'Routes concernant la gestion des utilisateurs')]
-    public function index(UserRepository $userRepository): JsonResponse
+    public function getUsers(UserRepository $userRepository, Request $request): JsonResponse
     {   
-        $users = $userRepository->findAll();
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+        $users = $userRepository->findAllWithPagination($page, $limit);
 
         return $this->json($users, Response::HTTP_OK, [], ['groups' => 'user:read']);
     }

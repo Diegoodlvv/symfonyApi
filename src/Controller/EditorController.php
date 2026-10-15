@@ -30,9 +30,11 @@ final class EditorController extends AbstractController
         ))
     )]
     #[OA\Tag('Editeurs', 'Routes concernant la gestion des éditeurs de jeu vidéo')]
-    public function index(EditorRepository $editorRepository): JsonResponse
+    public function getEditors(EditorRepository $editorRepository, Request $request): JsonResponse
     {   
-        $editors = $editorRepository->findAll();
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 10);
+        $editors = $editorRepository->findAllWithPagination($page, $limit);
 
         return $this->json($editors, Response::HTTP_OK, [], ['groups' => 'editor:read']);
     }
