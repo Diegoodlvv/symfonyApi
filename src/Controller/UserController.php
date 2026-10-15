@@ -74,7 +74,7 @@ final class UserController extends AbstractController
     public function createUser(Request $request, UserPasswordHasherInterface $hasher, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-        $hasher->hashPassword($user, $user->getPassword());
+        $user->setPassword($hasher->hashPassword($user, $user->getPassword()));
         $em->persist($user);
         $em->flush();
 

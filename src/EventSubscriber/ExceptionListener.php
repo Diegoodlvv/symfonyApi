@@ -24,7 +24,7 @@ class ExceptionListener implements EventSubscriberInterface
                 'message' => $exception->getMessage()
             ];
         }
-        $event->setResponse(new JsonResponse($data));
+        $event->setResponse(new JsonResponse($data, $data['status']));
     }
 
     public static function getSubscribedEvents(): array
