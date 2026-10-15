@@ -109,7 +109,35 @@ final class UserController extends AbstractController
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        return $this->json($updatedUser, Response::HTTP_OK, ["Location" => $location]);
+        return $this->json($updatedUser, Response::HTTP_OK, ["Location" => $location], ['groups' => 'user:write']);
+    }
+
+    // Modification de l'abonnement à la newsletter d'un utilisateur
+
+    #[OA\Response(
+        response:200,
+        description:"retourne l'utilisateur qui vient d'être modifié",
+        content: new OA\JsonContent(
+            ref: new Model(type: User::class, groups: ['user:newsletter'], name: 'UserSubscription')
+        )
+
+    )]
+    #[OA\RequestBody(
+        content: new Model(type: User::class, groups: ['user:newsletter'], name: 'UserSubscription')
+    )]
+    #[OA\Tag('Utilisateurs')]
+    #[Route('/api/v1/users/{id}/subscription', name: 'app_edit_user_subscription', methods: ['PATCH'])]
+    public function updateSubscriptionToNewsletter(User $currentUser, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
+    {
+        $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentUser]);
+        $em->flush();
+
+        $location = $urlGenerator->generate(
+            'app_user', ['id' => $updatedUser->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        return $this->json($updatedUser, Response::HTTP_OK, ["Location" => $location], ['groups' => 'user:newsletter']);
     }
 
     // Suppression d'un utilisateur

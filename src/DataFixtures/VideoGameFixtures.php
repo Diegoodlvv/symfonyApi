@@ -62,6 +62,34 @@ class VideoGameFixtures extends Fixture
                 'editor' => 'Electronic Arts',
                 'categories' => ['Sport'],
             ],
+            [
+                'title' => 'Hogwarts Legacy',
+                'releaseDate' => new \DateTime('+1 day'),
+                'description' => 'Jeu d’action-RPG se déroulant dans l’univers de Harry Potter.',
+                'editor' => 'Warner Bros',
+                'categories' => ['Action', 'RPG'],
+            ],
+            [
+                'title' => 'GTA VI',
+                'releaseDate' => new \DateTime('+3 days'),
+                'description' => 'Le prochain opus de la célèbre série Grand Theft Auto, se déroulant dans une ville fictive inspirée de Miami.',
+                'editor' => 'Rockstar Games',
+                'categories' => ['Action', 'Adventure'],
+            ],
+            [
+                'title' => 'Zelda: Ocarina of Time Remake',
+                'releaseDate' => new \DateTime('+5 days'),
+                'description' => 'Le remake tant attendue du classique de Nintendo, avec de nouvelles aventures et des graphismes améliorés.',
+                'editor' => 'Nintendo',
+                'categories' => ['Adventure', 'Action'],
+            ],
+            [
+                'title' => 'Cyberpunk 2077: Phantom Liberty',
+                'releaseDate' => new \DateTime('+7 days'),
+                'description' => 'La nouvelle extension de Cyberpunk 2077, offrant de nouvelles missions et un scénario captivant.',
+                'editor' => 'CD Projekt',
+                'categories' => ['RPG', 'Action'],
+            ]
         ];
 
         foreach($videoGamesData as $data){

@@ -32,6 +32,18 @@ class EditorFixtures extends Fixture
                 'name' => 'Electronic Arts',
                 'country' => 'United States',
             ],
+            [
+                'name' => 'Rockstar Games',
+                'country' => 'United States',
+            ],
+            [
+                'name' => 'Warner Bros',
+                'country' => 'United States',
+            ],
+            [
+                'name' => 'CD Projekt',
+                'country' => 'Poland'
+            ]
         ];
 
         foreach($editorsData as $data){

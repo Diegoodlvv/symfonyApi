@@ -26,7 +26,7 @@ class VideoGameRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findReleasingBetweenDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate): QueryBuilder
+    public function findReleasingBetweenDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
         $qb = $this->createQueryBuilder('v')
             ->where('v.releaseDate BETWEEN :start AND :end')
@@ -34,6 +34,6 @@ class VideoGameRepository extends ServiceEntityRepository
             ->setParameter('end', $endDate)
             ->orderBy('v.releaseDate', 'ASC');
 
-        return $qb;
+        return $qb->getQuery()->getResult();
     }
 }

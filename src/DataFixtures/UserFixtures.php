@@ -12,14 +12,28 @@ class UserFixtures extends Fixture
     {
         $users = [
             [
-                'username' => 'diego.dlvv',
+                'email' => 'diego.dlvv@example.com',
+                'subscription_to_newsletter' => true,
+                'password' => '$2y$13$a4zkCorIzT8nrJo15svQFuudgr16oe0cb/EmJiZO0Ae7cnd1PLcfe'
+
+            ],
+            [
+                'email' => 'jane.doe@example.com',
+                'subscription_to_newsletter' => false,
+                'password' => '$2y$13$a4zkCorIzT8nrJo15svQFuudgr16oe0cb/EmJiZO0Ae7cnd1PLcfe'
+            ],
+            [
+                'email' => 'john.doe@example.com',
+                'subscription_to_newsletter' => true,
                 'password' => '$2y$13$a4zkCorIzT8nrJo15svQFuudgr16oe0cb/EmJiZO0Ae7cnd1PLcfe'
             ]
+
         ];
 
         foreach($users as $data){
             $user = new User();
-            $user->setUsername($data['username'])
+            $user->setEmail($data['email'])
+                 ->setSubscriptionToNewsletter($data['subscription_to_newsletter'])
                  ->setPassword($data['password']);
             $manager->persist($user);
         }

@@ -19,19 +19,19 @@ class UserRepository extends ServiceEntityRepository
 
     public function findAllWithPagination(int $page, int $limit) {
         $qb = $this->createQueryBuilder('u')
-            ->orderBy('u.username', 'ASC')
+            ->orderBy('u.email', 'ASC')
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
 
         return $qb->getQuery()->getResult();
     }
 
-    public function getSubscribedUsers(): QueryBuilder
+    public function findSubscribedUsers(): array
     {
         $qb = $this->createQueryBuilder('u')
             ->where('u.subscriptionToNewsletter = :subscribed')
             ->setParameter('subscribed', true);
 
-        return $qb;
+        return $qb->getQuery()->getResult();
     }
 }
