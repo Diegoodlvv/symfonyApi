@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -39,7 +40,7 @@ final class VideoGameController extends AbstractController
         return $this->json($videoGames, Response::HTTP_OK, [], ['groups' => 'videogame:read']);
     }
 
-    // Récupération d'un éditeur 
+    // Récupération d'un jeu vidéo
 
     #[Route('api/videogames/{id}', name:'app_videogame', methods:['GET'])]
     #[OA\Response(
@@ -56,7 +57,7 @@ final class VideoGameController extends AbstractController
         return $this->json($videoGame, Response::HTTP_OK, [], ['groups' => 'videogame:read']);
     }
 
-    // Création d'un éditeur
+    // Création d'un jeu vidéo
 
     #[Route('/api/v1/videogames', name: 'app_new_videogame', methods: ['POST'])]
     #[OA\Response(
@@ -73,6 +74,21 @@ final class VideoGameController extends AbstractController
     public function createVideoGame(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $videoGame = $serializer->deserialize($request->getContent(), type:VideoGame::class, format:'json');
+
+        $coverImage = $request->files->get('coverImage');
+        if($coverImage){
+            $newFilename = uniqid() . '.' . $coverImage->guessExtension();
+            try{
+                $coverImage->move(
+                    $this->getParameter('cover_directory'),
+                    $newFilename
+                );
+                $videoGame->setCoverImage($newFilename);
+            }  catch(FileException $e){
+                return new JsonResponse(['error' => 'Impossible d\'enregistrer l\'image'], 500);
+            }
+        }
+
         $em->persist($videoGame);
         $em->flush();
 
@@ -84,7 +100,7 @@ final class VideoGameController extends AbstractController
         return $this->json($videoGame, Response::HTTP_CREATED, ["Location" => $location], ['groups' => 'videogame:write']);
     }
 
-    // Modification d'un éditeur
+    // Modification d'un jeu vidéo
 
     #[Route('/api/v1/videogames/{id}', name: 'app_edit_videogame', methods: ['PUT'])]
     #[OA\Response(

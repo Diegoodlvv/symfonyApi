@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -70,9 +71,10 @@ final class UserController extends AbstractController
         content: new Model(type: User::class, groups: ['user:write'], name: 'UserWrite')
     )]
     #[OA\Tag('Utilisateurs')]
-    public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
+    public function createUser(Request $request, UserPasswordHasherInterface $hasher, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
-        $user = $serializer->deserialize($request->getContent(), type:User::class, format:'json');
+        $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+        $hasher->hashPassword($user, $user->getPassword());
         $em->persist($user);
         $em->flush();
 
@@ -101,7 +103,7 @@ final class UserController extends AbstractController
     #[OA\Tag('Utilisateurs')]
     public function updateUser(User $currentUser, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
-        $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentUser]);
+        $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentUser, 'groups' => 'user:write']);
         $em->flush();
 
         $location = $urlGenerator->generate(
@@ -129,7 +131,7 @@ final class UserController extends AbstractController
     #[Route('/api/v1/users/{id}/subscription', name: 'app_edit_user_subscription', methods: ['PATCH'])]
     public function updateSubscriptionToNewsletter(User $currentUser, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
-        $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentUser]);
+        $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $currentUser, 'groups' => 'user:newsletter']);
         $em->flush();
 
         $location = $urlGenerator->generate(

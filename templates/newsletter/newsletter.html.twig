@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
-    <body>
+    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
         {% block body %}
             <h1 style="color: #333; font-size: 1.5em; font-weight: bold;">Liste des jeux vidéo qui seront sortis dans les 7 prochains jours</h1>
             {% for game in videogames %}
                 <div style="margin-bottom: 20px;">
                     <h2 style="color: #333; font-size: 1.5em; font-weight: bold;">{{ game.title }}</h2>
+                    <img src="/uploads/covers/{{ game.coverImage }}" alt="{{ game.title }}" style="width: 200px; height: auto; margin-bottom: 10px;">
                     <p style="color: #666; font-weight: bold;">Sortie prévue le : {{ game.releaseDate|date('d/m/Y') }}</p>
                     <p style="color: #666; font-weight: bold;">Éditeur : {{ game.editor.name }}</p>
                     {% for category in game.categories %}
-                        <p style="color: #666; font-weight: bold; margin-bottom: 5px; border: 1px solid #ccc; padding: 5px;">Genre : {{ category.name }}</p>
+                        <p style="color: #666; font-weight: bold; margin-bottom: 5px; border: 1px solid #ccc; padding: 5px;">Catégorie : {{ category.name }}</p>
                     {% endfor %}
                 </div>
             {% else %}
