@@ -73,31 +73,77 @@ final class VideoGameController extends AbstractController
     #[OA\Tag('Jeux Vidéo')]
     public function createVideoGame(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
-        $videoGame = $serializer->deserialize($request->getContent(), type:VideoGame::class, format:'json');
-
-        $coverImage = $request->files->get('coverImage');
-        if($coverImage){
-            $newFilename = uniqid() . '.' . $coverImage->guessExtension();
-            try{
-                $coverImage->move(
-                    $this->getParameter('cover_directory'),
-                    $newFilename
-                );
-                $videoGame->setCoverImage($newFilename);
-            }  catch(FileException $e){
-                return new JsonResponse(['error' => 'Impossible d\'enregistrer l\'image'], 500);
-            }
-        }
+        $videoGame = $serializer->deserialize($request->getContent(), VideoGame::class, 'json');
 
         $em->persist($videoGame);
         $em->flush();
 
-        $location = $urlGenerator->generate(
-            'app_videogame', ['id' => $videoGame->getId()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
+        $location = $urlGenerator->generate('app_videogame', ['id' => $videoGame->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        return $this->json($videoGame, Response::HTTP_CREATED, ["Location" => $location], ['groups' => 'videogame:write']);
+        return $this->json($videoGame, Response::HTTP_CREATED, ['Location' => $location], ['groups' => 'videogame:read']);
+    }
+
+    #[Route('/api/v1/videogames/{id}/cover', name: 'app_upload_cover', methods: ['POST'])]
+    #[OA\Response(
+        response: 200,
+        description: "Retourne le jeu vidéo avec la cover qui vient d'être ajoutée",
+        content: new OA\JsonContent(
+            ref: new Model(type: VideoGame::class, groups: ['videogame:read'], name: 'VideoGameRead')
+        )
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\MediaType(
+            mediaType: 'multipart/form-data',
+            schema: new OA\Schema(
+                required: ['coverImage'],
+                properties: [
+                    new OA\Property(
+                        property: 'coverImage',
+                        description: 'Image de couverture (jpg, png, webp)',
+                        type: 'string',
+                        format: 'binary'
+                    ),
+                ]
+            )
+        )
+    )]
+    #[OA\Tag('Jeux Vidéo')]
+    public function uploadCover(VideoGame $videoGame, Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $coverImage = $request->files->get('coverImage');
+
+        if (!$coverImage) {
+            return $this->json(['error' => 'Aucune image envoyée'], 400);
+        }
+
+        if ($coverImage->getSize() > 2 * 1024 * 1024) {
+            return $this->json(['error' => 'Image trop lourde (2 Mo max)'], 400);
+        }
+
+        if (!in_array($coverImage->getMimeType(), ['image/jpeg', 'image/png', 'image/webp'])) {
+            return $this->json(['error' => 'Format d\'image non accepté'], 400);
+        }
+
+        $newFilename = uniqid() . '.' . $coverImage->guessExtension();
+
+        try {
+            $coverImage->move($this->getParameter('cover_directory'), $newFilename);
+        } catch (FileException $e) {
+            return $this->json(['error' => 'Impossible d\'enregistrer l\'image'], 500);
+        }
+
+        if ($videoGame->getCoverImage()) {
+            $oldPath = $this->getParameter('cover_directory') . '/' . $videoGame->getCoverImage();
+            if (file_exists($oldPath)) {
+                unlink($oldPath);
+            }
+        }
+
+        $videoGame->setCoverImage($newFilename);
+        $em->flush();
+
+        return $this->json($videoGame, Response::HTTP_OK, [], ['groups' => 'videogame:read']);
     }
 
     // Modification d'un jeu vidéo

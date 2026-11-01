@@ -97,8 +97,7 @@ class VideoGameFixtures extends Fixture
             $videoGame->setTitle($data['title'])
                     ->setReleaseDate($data['releaseDate'])
                     ->setDescription($data['description'])
-                    ->setEditor($this->getReference($data['editor'], Editor::class))
-                    ->setCoverImage($data['coverImage']);
+                    ->setEditor($this->getReference($data['editor'], Editor::class));
             foreach($data['categories'] as $dataCategories){
                 $videoGame->addCategory($this->getReference($dataCategories, Category::class));
             }

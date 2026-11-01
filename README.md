@@ -79,7 +79,7 @@ DATABASE_URL="mysql://root:@127.0.0.1:3306/projet_apiSF?serverVersion=10.4.32-Ma
 JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
 JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
 JWT_PASSPHRASE=votre_passphrase
-
+DEFAULT_URI=http://localhost:8000
 MAILER_DSN=smtp://USER:PASSWORD@sandbox.smtp.mailtrap.io:2525
 MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
 ```

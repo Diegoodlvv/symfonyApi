@@ -61,7 +61,7 @@ class VideoGame
     private ?Editor $editor = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['videogame:read', 'videogame:write'])]
+    #[Groups(['videogame:read'])]
     private ?string $coverImage = null;
 
     public function __construct()
