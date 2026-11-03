@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: VideoGameRepository::class)]
 class VideoGame
@@ -21,14 +22,20 @@ class VideoGame
 
     #[ORM\Column(length: 255)]     
     #[Groups(['videogame:read', 'videogame:write'])]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Groups(['videogame:read', 'videogame:write'])]
+    #[Assert\NotBlank]
+    #[Assert\Type('datetime')]
     private ?\DateTime $releaseDate = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['videogame:read', 'videogame:write'])]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     private ?string $description = null;
 
     /**

@@ -20,13 +20,13 @@ class Editor
 
     #[ORM\Column(length: 255)]
     #[Groups(['editor:read', 'editor:write', 'videogame:read'])]
-    #[Assert\NotBlank(groups:['editor:read', 'editor:write'])]
+    #[Assert\NotBlank()]
     #[Assert\Type('string')]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['editor:read', 'editor:write'])]
-    #[Assert\NotBlank(groups:['editor:read', 'editor:write'])]
+    #[Assert\NotBlank()]
     #[Assert\Type(type:'string')]
     private ?string $country = null;
 
